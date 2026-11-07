@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPulse & Stock Hub | Real-Time Market Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Glowing Bar & Ticker Marquee -->
+    <div class="top-marquee-bar">
+        <div class="marquee-tag"><i class="fa-solid fa-bolt"></i> LIVE FEED</div>
+        <div class="marquee-container" id="tickerMarquee">
+            <!-- Dynamically populated via JS -->
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-logo">
+                <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h2>Crypto<span>Pulse</span></h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#" class="nav-item" data-tab="markets"><i class="fa-solid fa-globe"></i> Markets</a>
+                <a href="#" class="nav-item" data-tab="trade"><i class="fa-solid fa-right-left"></i> Trade Terminal</a>
+                <a href="#" class="nav-item" data-tab="portfolio"><i class="fa-solid fa-wallet"></i> My Portfolio</a>
+                <a href="#" class="nav-item" data-tab="analytics"><i class="fa-solid fa-brain"></i> AI Sentiment</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile-card">
+                    <div class="avatar">AP</div>
+                    <div class="user-info">
+                        <h4>Asif Patel</h4>
+                        <p>Pro Trader</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="app-header">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="globalSearch" placeholder="Search assets (e.g., BTC, AAPL, ETH)...">
+                </div>
+                <div class="header-actions">
+                    <div class="balance-pill">
+                        <span class="label">Buying Power:</span>
+                        <span class="value" id="headerBalance">$24,580.50</span>
+                    </div>
+                    <button class="icon-btn" id="themeToggleBtn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                    <button class="primary-btn" id="openTradeModalBtn"><i class="fa-solid fa-plus"></i> Quick Trade</button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div class="content-view active" id="dashboardView">
+                <!-- Market Overview Banner -->
+                <div class="market-overview-banner">
+                    <div class="banner-left">
+                        <div class="asset-badge" id="currentAssetBadge">BTC / USD</div>
+                        <h1 id="mainAssetPrice">$68,420.10</h1>
+                        <p class="price-change positive" id="mainAssetChange">+3.45% ($2,280.40)</p>
+                    </div>
+                    <div class="banner-right">
+                        <div class="timeframe-selector" id="timeframeSelector">
+                            <button class="tf-btn" data-tf="1H">1H</button>
+                            <button class="tf-btn active" data-tf="1D">1D</button>
+                            <button class="tf-btn" data-tf="1W">1W</button>
+                            <button class="tf-btn" data-tf="1M">1M</button>
+                            <button class="tf-btn" data-tf="1Y">1Y</button>
+                        </div>
+                        <div class="chart-action-btns">
+                            <button class="action-btn buy" onclick="openTradeModal('buy')">Buy</button>
+                            <button class="action-btn sell" onclick="openTradeModal('sell')">Sell</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chart & Stats Grid -->
+                <div class="dashboard-grid">
+                    <div class="glass-card chart-card">
+                        <div class="card-header">
+                            <h3>Price Action & Trend Analysis</h3>
+                            <div class="card-tools">
+                                <span class="live-dot"></span> Live Feed
+                            </div>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="priceCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card ai-sentiment-card">
+                        <div class="card-header">
+                            <h3>AI Market Sentiment</h3>
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <div class="sentiment-gauge-wrapper">
+                            <div class="gauge-circle">
+                                <svg viewBox="0 0 36 36" class="circular-chart">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    <path class="circle" stroke-dasharray="78, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                </svg>
+                                <div class="gauge-content">
+                                    <span class="gauge-score">78%</span>
+                                    <span class="gauge-label">Extreme Greed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="sentiment-desc">Algorithmic indicators suggest strong bullish momentum across crypto and tech sectors.</p>
+                    </div>
+                </div>
+
+                <!-- Watchlist Table Section -->
+                <div class="glass-card table-card">
+                    <div class="card-header">
+                        <h3>Live Markets Watchlist</h3>
+                        <div class="filter-tabs">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="crypto">Crypto</button>
+                            <button class="filter-btn" data-filter="stocks">Stocks</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="market-table" id="watchlistTable">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Symbol</th>
+                                    <th>Price (USD)</th>
+                                    <th>24h Change</th>
+                                    <th>24h Volume</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="watchlistBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Views (Markets, Trade, Portfolio, Analytics) -->
+            <div class="content-view" id="marketsView">
+                <div class="glass-card">
+                    <h2>Global Markets Explorer</h2>
+                    <p class="sub-text">Comprehensive overview of top 50+ global financial instruments.</p>
+                    <div class="markets-grid" id="marketsGrid"></div>
+                </div>
+            </div>
+
+            <div class="content-view" id="tradeView">
+                <div class="glass-card trade-terminal-card">
+                    <h2>Advanced Trading Terminal</h2>
+                    <div class="terminal-layout">
+                        <div class="order-form-panel">
+                            <div class="form-group">
+                                <label>Select Asset</label>
+                                <select id="tradeAssetSelect" class="cyber-select">
+                                    <option value="BTC">Bitcoin (BTC)</option>
+                                    <option value="ETH">Ethereum (ETH)</option>
+                                    <option value="SOL">Solana (SOL)</option>
+                                    <option value="AAPL">Apple Inc. (AAPL)</option>
+                                    <option value="TSLA">Tesla (TSLA)</option>
+                                    <option value="NVDA">NVIDIA (NVDA)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Order Type</label>
+                                <div class="order-type-tabs">
+                                    <button class="type-tab active" data-type="market">Market</button>
+                                    <button class="type-tab" data-type="limit">Limit</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (Units)</label>
+                                <input type="number" id="tradeAmountInput" class="cyber-input" value="1" min="0.01" step="0.01">
+                            </div>
+                            <div class="order-summary-box">
+                                <div class="summary-row"><span>Estimated Cost:</span> <span id="estCost">$68,420.10</span></div>
+                                <div class="summary-row"><span>Trading Fee (0.1%):</span> <span id="estFee">$68.42</span></div>
+                            </div>
+                            <div class="terminal-actions">
+                                <button class="action-btn buy full" id="executeBuyBtn"><i class="fa-solid fa-arrow-trend-up"></i> Execute Buy Order</button>
+                                <button class="action-btn sell full" id="executeSellBtn"><i class="fa-solid fa-arrow-trend-down"></i> Execute Sell Order</button>
+                            </div>
+                        </div>
+                        <div class="order-book-panel">
+                            <h4>Live Order Book</h4>
+                            <div class="order-book" id="orderBookList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-view" id="portfolioView">
+                <div class="glass-card">
+                    <div class="portfolio-header">
+                        <div>
+                            <h2>My Portfolio Holdings</h2>
+                            <p class="sub-text">Real-time valuation of your active investments.</p>
+                        </div>
+                        <div class="portfolio-stats">
+                            <div class="stat-box">
+                                <span>Total Value</span>
+                                <h3 id="portfolioTotalVal">$24,580.50</h3>
+                            </div>
+                            <div class="stat-box">
+                                <span>Total Profit/Loss</span>
+                                <h3 id="portfolioPNL" class="positive">+$1,245.80 (+5.3%)</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="market-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Holdings</th>
+                                    <th>Avg Buy Price</th>
+                                    <th>Current Value</th>
+                                    <th>P&L</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolioBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-view" id="analyticsView">
+                <div class="glass-card">
+                    <h2>AI Predictive Analytics & Sentiment Hub</h2>
+                    <p class="sub-text">Neural net predictions based on multi-source sentiment aggregation.</p>
+                    <div class="analytics-grid">
+                        <div class="analytic-box">
+                            <i class="fa-solid fa-brain"></i>
+                            <h4>Macro Sentiment Score</h4>
+                            <div class="score-bar"><div class="fill" style="width: 78%;"></div></div>
+                            <span>78 / 100 (Bullish)</span>
+                        </div>
+                        <div class="analytic-box">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <h4>Volatility Index (VIX)</h4>
+                            <h3>14.22</h3>
+                            <span class="positive">Low Volatility</span>
+                        </div>
+                        <div class="analytic-box">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <h4>Whale Wallet Flow</h4>
+                            <h3 class="positive">+$450M Inflow</h3>
+                            <span>Accumulation Phase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Quick Trade Modal -->
+    <div class="modal-overlay" id="tradeModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Execute Instant Trade</h3>
+                <button class="close-modal-btn" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Asset Symbol</label>
+                    <input type="text" id="modalAsset" class="cyber-input" value="BTC/USD" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Quantity / Units</label>
+                    <input type="number" id="modalQty" class="cyber-input" value="0.5" min="0.01" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Current Price</label>
+                    <input type="text" id="modalPrice" class="cyber-input" value="$68,420.10" readonly>
+                </div>
+                <button class="primary-btn full-width" id="confirmTradeBtn">Confirm Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toastNotification">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMessage">Order executed successfully!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
